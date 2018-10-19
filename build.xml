@@ -1,0 +1,33 @@
+<project name="GOC" default="test" basedir="." xmlns:sf="antlib:com.salesforce">
+    <property name="lib.dir" location="./lib"/>
+    <property file="build.properties"/>
+    <property environment="env"/>
+
+    <!-- Load libs -->
+    <taskdef uri='antlib:com.salesforce' resource='com/salesforce/antlib.xml' classpath='${lib.dir}/ant-salesforce-43.jar' />
+
+    <!-- Deploy the unpackaged set of metadata retrieved with retrieveUnpackaged -->
+    <target name="deploy">
+      <sf:deploy
+        username="${dev.username}"
+        password="${dev.password}"
+        serverurl="${dev.serverurl}"
+        deployRoot="src"
+        maxPoll="100"
+        ignoreWarnings="true"
+        runAllTests="${dev.runAllTests}"
+        />
+    </target>
+
+    <target name="retrieve">
+    <sf:retrieve
+        username="${dev.username}"
+        password="${dev.password}"
+        serverurl="${dev.serverurl}"
+        retrieveTarget="src"
+        unpackaged="src/package.xml"
+        />
+</target>
+
+
+</project>
