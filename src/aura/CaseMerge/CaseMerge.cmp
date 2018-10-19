@@ -1,0 +1,128 @@
+<aura:component controller="CaseMergeController" implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    <aura:attribute name="mydata" type="Object"/>
+    <aura:attribute name="selectedCases" type="Object"/>
+    <aura:handler event="force:showToast" action="{! c.init }" />
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    
+    <div style="border: 1px solid #dddbda; border-radius: 0.25rem;">
+        <!--loading spinner start... style=Brand Medium (blue dots)-->
+        <aura:if isTrue="{!v.Spinner}">
+            <div aura:id="spinnerId" class="slds-spinner_container">
+                <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </aura:if>
+        <!-- Loading spinner end-->
+        <lightning:card >
+            <aura:set attribute="title">
+                <div style="padding: 0 1rem 0;">
+                    <lightning:icon iconName="standard:case" />
+                    Duplicate Cases
+                </div>
+            </aura:set>
+            <aura:set attribute="actions">
+                <div style="padding: 0 1rem 0;">
+                    <lightning:buttonGroup>
+                    	<lightning:button label="Merge All" title="Merge All Targets..." onclick="{!c.mergeAllCases}" disabled="" />
+                    	<lightning:button label="Merge Selected" title="Merge Selected Targets..." onclick="{!c.mergeSelectedCases}" />
+                    </lightning:buttonGroup>
+                 </div>
+            </aura:set>
+            <aura:set attribute="body">
+                <ui:scrollerWrapper class="scrollerSize">
+                    <table class="slds-table slds-table_fixed-layout slds-table--bordered slds-table--cell-buffer">
+                        <thead>
+                            <tr class="slds-text-title--caps">
+                                <th style="width:2rem;" class="slds-text-align--right">
+                                    <div class="slds-form-element">
+                                        <div class="slds-form-element__control">
+                                            <label class="slds-checkbox">
+                                                <!--header checkbox for select all  -->
+                                                <ui:inputCheckbox aura:id="box3" change="{!c.selectAll}" />
+                                                <span class="slds-checkbox--faux"></span>
+                                                <span class="slds-form-element__label text"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </th>
+                                <th style="width:5.5rem;" >
+                                    <span class="slds-truncate" title="Name">Case Number</span>
+                                </th >
+                                <th style="width:4rem;">
+                                    <span class="slds-truncate" title="Status">Status</span>
+                                </th>
+                                <th style="width:8rem;">
+                                    <div class="slds-truncate" title="Type">Origin</div>
+                                </th>
+                                <th style="width:5rem;">
+                                    <div class="slds-truncate" title="Additional Info">Subject</div>
+                                </th>
+                                <th style="width:8rem;">
+                                    <span class="slds-truncate" title="Department">Description</span>
+                                </th>
+                                <th style="width:6.5rem;">
+                                    <div class="slds-truncate" title="Actual End Time">Created Date</div>
+                                </th>
+                                <th style="width:2rem;">
+                                    <div class="slds-truncate" title="Action"></div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.mydata}" var="con">
+                                <tr>
+                                    <td scope="row" class="slds-text-align--right" style="width:3.25rem;">
+                                        <div class="slds-form-element">
+                                            <div class="slds-form-element__control">
+                                                <label class="slds-checkbox"> <!-- change="{!c.checkboxSelect}" -->
+                                                    <ui:inputCheckbox text="{!con}" aura:id="target" value="" />
+                                                    <span class="slds-checkbox--faux"></span>
+                                                    <span class="slds-form-element__label text"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td scope="row">
+                                        <div class="slds-truncate" title="{!con.CaseNumber}">
+                                            <lightning:formattedUrl target="_blank" value="{!'/' + con.Id}" label="{!con.CaseNumber}" />
+                                        </div>
+                                    </td>
+                                    <td scope="row">
+                                        <div class="slds-truncate" title="{!con.Status}">{!con.Status}</div>
+                                    </td>
+                                    <td scope="row">
+                                        <div class="slds-truncate" title="{!con.Origin}">{!con.Origin}</div>
+                                    </td>
+                                    <td scope="row">
+                                        <div class="slds-truncate" title="{!con.Subject}">{!con.Subject}</div>
+                                    </td>
+                                    <td scope="row">
+                                        <div class="slds-truncate" title="{!con.Description}">{!con.Description}</div>
+                                    </td>
+                                    <td scope="row">
+                                        <div title="{!con.CreatedDate}">
+                                            <lightning:formattedDateTime value="{!con.CreatedDate}" year="2-digit" month="numeric" day="numeric"  hour="2-digit" minute="numeric" ></lightning:formattedDateTime>
+                                        </div>
+                                    </td>
+                                    <td scope="row">
+                                        <lightning:buttonMenu value="{!con}" iconName="utility:down" menuAlignment="center" variant="border-filled" alternativeText="Action" iconSize="x-small" onselect="{! c.handleActionMenu }" >
+                                            <lightning:menuItem label="Edit" value="edit" />
+                                            <lightning:menuItem label="Delete" value="delete"/>
+                                        </lightning:buttonMenu>
+                                    </td>
+                                </tr>
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                </ui:scrollerWrapper>
+            </aura:set>
+        </lightning:card>
+    </div>
+</aura:component>

@@ -6,6 +6,11 @@
         <name>ApexClass</name>
     </types>
     <types>
+        <members>CaseMerge</members>
+        <members>CaseMergeConfiguration</members>
+        <name>AuraDefinitionBundle</name>
+    </types>
+    <types>
         <members>CaseMergeSettings__c.Case_Fields__c</members>
         <members>CaseMergeSettings__c.Objects_to_Merge__c</members>
         <name>CustomField</name>
